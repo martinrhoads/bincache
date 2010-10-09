@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# 
+# This is a CLI runner for BinCache
+# 
+# 
+# bincache dir script1 script2 ... scriptn
+
+## dev env
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
+
+require 'rubygems'
+require 'bincache'
+
+dir = ARGV.shift
+scripts = []
+ARGV.each { |s| scripts << File.read(s) }
+b = BinCache.new
+b.run_series(dir,scripts)
+
+
