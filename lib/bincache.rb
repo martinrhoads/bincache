@@ -7,20 +7,17 @@ require 'right_aws'
 class BinCache
 
   def initialize()
-    @bucket = 'devs-us-west'
-    @prefix = 'martin/bincache/'
     @download_dir = '/tmp'
 
-    print_and_exit "s3 keys not set. Please set S3_ACCESS_KEY and S3_SECRET_KEY" unless ENV['S3_ACCESS_KEY'] && ENV['S3_SECRET_KEY']
+    print_and_exit "s3 keys not set. Please set S3_BUCKET and S3_PREFIX" unless ENV['S3_BUCKET'] && ENV['S3_PREFIX']
+    @bucket = ENV['S3_BUCKET']
+    @prefix = ENV['S3_PREFIX']
 
+
+    print_and_exit "s3 keys not set. Please set S3_ACCESS_KEY and S3_SECRET_KEY" unless ENV['S3_ACCESS_KEY'] && ENV['S3_SECRET_KEY']
     @right_s3 = RightAws::S3.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET_KEY'])
     @right_s3_bucket = @right_s3.bucket(@bucket)
     @right_s3_interface = RightAws::S3Interface.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET_KEY'])
-  end
-
-
-  def bincache(script,dir)
-    script_hash = Digest::MD5.hexdigest(script)
   end
 
   def run_series(directory, scripts)
@@ -41,7 +38,6 @@ class BinCache
 
     ## step this script
     step(pop,directory,hash)
-
   end
 
   def check_for_hash?(hash)
