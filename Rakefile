@@ -10,7 +10,7 @@ begin
     gem.email = "martinrhoads@gmail.com"
     gem.homepage = "http://github.com/ermal14/bincache"
     gem.authors = ["Martin Rhoads"]
-    gem.add_development_dependency "right_aws", ">= 0"
+    gem.add_dependency "right_aws", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

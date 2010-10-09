@@ -9,13 +9,13 @@ class BinCache
   def initialize()
     @bucket = 'devs-us-west'
     @prefix = 'martin/bincache/'
-    @download_dir = '/private/tmp'
+    @download_dir = '/tmp'
 
-    print_and_exit "s3 keys not set. Please let S3_ACCESS_KEY and S3_SECRET__KEY" unless ENV['S3_ACCESS_KEY'] && ENV['S3_SECRET__KEY']
+    print_and_exit "s3 keys not set. Please set S3_ACCESS_KEY and S3_SECRET_KEY" unless ENV['S3_ACCESS_KEY'] && ENV['S3_SECRET_KEY']
 
-    @right_s3 = RightAws::S3.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET__KEY'])
+    @right_s3 = RightAws::S3.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET_KEY'])
     @right_s3_bucket = @right_s3.bucket(@bucket)
-    @right_s3_interface = RightAws::S3Interface.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET__KEY'])
+    @right_s3_interface = RightAws::S3Interface.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET_KEY'])
   end
 
 
@@ -105,7 +105,7 @@ class BinCache
   end
 
   def print_and_exit(message)
-    STDERR.puts "cought an error in bincache" 
+    STDERR.puts "caught an error in bincache" 
     STDERR.puts message
     Kernel.exit 1
   end
