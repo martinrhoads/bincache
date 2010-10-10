@@ -7,7 +7,8 @@ require 'right_aws'
 class BinCache
 
   def initialize()
-    @download_dir = '/tmp'
+    ## set cache_dir to'/var/tmp/bincache' or ENV['BINCACHE_DIR'] if it is set 
+    @cache_dir = (ENV['BINCACHE_DIR']  && ENV['BINCACHE_DIR']) || '/var/tmp/bincache'
 
     print_and_exit "s3 keys not set. Please set S3_BUCKET and S3_PREFIX" unless ENV['S3_BUCKET'] && ENV['S3_PREFIX']
     @bucket = ENV['S3_BUCKET']
@@ -28,7 +29,7 @@ class BinCache
     `rm -rf #{directory} && mkdir -p #{directory}` && return if scripts.empty?
 
     ## hash the scripts
-    hash = Digest::MD5.hexdigest(scripts.inspect)
+    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
        
     ## pop the last script   
     pop = scripts.pop
@@ -41,6 +42,9 @@ class BinCache
   end
 
   def check_for_hash?(hash)
+    ## return true if the hash is already on our local fs
+    return true if File.exists?(File.join(@cache_dir,hash))
+
     key = RightAws::S3::Key.create( @right_s3_bucket, "#{@prefix}#{hash}" )
     key.exists?
   end
@@ -48,13 +52,13 @@ class BinCache
   def step(script,directory,hash)
     if download_hash? hash
       `rm -rf #{directory}`
-      `cd #{File.dirname directory} && tar -xzvf #{File.join(@download_dir,hash)} `
+      `cd #{File.dirname directory} && tar -xzvf #{File.join(@cache_dir,hash)} `
     else
-      `mkdir -p #{directory}`
+      `mkdir -p #{directory} #{@cache_dir}`
       Dir.chdir directory
       res = `#{script}`
-      `cd #{File.dirname directory} && tar -czvf #{@download_dir}/#{hash} #{File.basename directory} `
-      upload_file("#{@download_dir}/#{hash}")
+      `cd #{File.dirname directory} && tar -czvf #{@cache_dir}/#{hash} #{File.basename directory} `
+      upload_file("#{@cache_dir}/#{hash}")
     end
   end
 
@@ -69,8 +73,12 @@ class BinCache
   end
 
   def download_hash?(hash)
+    ## return true if the hash is already on our local fs
+    return true if File.exists?(File.join(@cache_dir,hash))
+
+    ## attempt to download the hash from s3
     begin
-      File.open(File.join(@download_dir,hash) , 'w') {|f| f.write( @right_s3_interface.get_object(@bucket, "#{@prefix}#{hash}") ) }
+      File.open(File.join(@cache_dir,hash) , 'w') {|f| f.write( @right_s3_interface.get_object(@bucket, "#{@prefix}#{hash}") ) }
     rescue 
       return false
     end
