@@ -2,10 +2,20 @@
 
 BinCache is a system designed to chache compiled binaries. It has resources for bash, ruby and chef. 
 
+== Install 
+ 
+  ## add rubygems.org to your gem sources list if it is not already there
+  gem sources -a https://rubygems.org
+
+  
+  ## install bincache
+  gem install bincache
+
+
 == Bash example
 
-  ## install bincache 
-  gem install bincache
+  ## you may have to put rubygems in your path by doing something like..
+  # export PATH=$HOME/.gem/ruby/1.8/bin:$PATH
 
 
   ## set the directory to cache
