@@ -1,8 +1,16 @@
 #!/bin/env ruby 
 
+
 require 'digest/md5'
 require 'rubygems'
 require 'right_aws'
+
+
+## don't fail if chef is not installed
+if Object.const_defined?("Chef")
+  require File.join(File.dirname(__FILE__),'bincache/provider/bincache') 
+  require File.join(File.dirname(__FILE__),'bincache/resource/bincache') 
+end
 
 class BinCache
 

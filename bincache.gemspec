@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Martin Rhoads"]
-  s.date = %q{2010-10-09}
+  s.date = %q{2010-10-10}
   s.default_executable = %q{bincache}
   s.description = %q{longer description of your gem}
   s.email = %q{martinrhoads@gmail.com}
@@ -28,6 +28,8 @@ Gem::Specification.new do |s|
      "bin/bincache",
      "bincache.gemspec",
      "lib/bincache.rb",
+     "lib/bincache/provider/bincache.rb",
+     "lib/bincache/resource/bincache.rb",
      "scripts/script1",
      "scripts/script2",
      "scripts/script3",
