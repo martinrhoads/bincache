@@ -17,16 +17,16 @@ BinCache is a system designed to chache compiled binaries on S3. It has resource
 Make sure you set the environment variables with something like:
  
   ## S3 access key id
-  export S3_ACCESS_KEY=1234567890ABCDEFGHIJ
+  export BINCACHE_S3_ACCESS_KEY=1234567890ABCDEFGHIJ
 
   ## S3 secret access key
-  export S3_SECRET_KEY=1234567890ABCDEFHIJKLMNOPQRSTUVWXYZ12345
+  export BINCACHE_S3_SECRET_KEY=1234567890ABCDEFHIJKLMNOPQRSTUVWXYZ12345
 
   ## S3 bucket
-  export S3_BUCKET=my_ec2_bucket
+  export BINCACHE_S3_BUCKET=my_ec2_bucket
 
   ## prefix inside bucket to store caches
-  export S3_PREFIX=my_bincache/
+  export BINCACHE_S3_PREFIX=my_bincache/
 
 
 == Bash example

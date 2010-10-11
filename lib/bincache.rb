@@ -18,15 +18,15 @@ class BinCache
     ## set cache_dir to'/var/tmp/bincache' or ENV['BINCACHE_DIR'] if it is set 
     @cache_dir = (ENV['BINCACHE_DIR']  && ENV['BINCACHE_DIR']) || '/var/tmp/bincache'
 
-    print_and_exit "s3 keys not set. Please set S3_BUCKET and S3_PREFIX" unless ENV['S3_BUCKET'] && ENV['S3_PREFIX']
-    @bucket = ENV['S3_BUCKET']
-    @prefix = ENV['S3_PREFIX']
+    print_and_exit "S3 bucket and path not set. Please set BINCACHE_S3_BUCKET and BINCACHE_S3_PREFIX" unless ENV['BINCACHE_S3_BUCKET'] && ENV['BINCACHE_S3_PREFIX']
+    @bucket = ENV['BINCACHE_S3_BUCKET']
+    @prefix = ENV['BINCACHE_S3_PREFIX']
 
 
-    print_and_exit "s3 keys not set. Please set S3_ACCESS_KEY and S3_SECRET_KEY" unless ENV['S3_ACCESS_KEY'] && ENV['S3_SECRET_KEY']
-    @right_s3 = RightAws::S3.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET_KEY'])
-    @right_s3_bucket = @right_s3.bucket(@bucket)
-    @right_s3_interface = RightAws::S3Interface.new(ENV['S3_ACCESS_KEY'],ENV['S3_SECRET_KEY'])
+    print_and_exit "S3 keys not set. Please set BINCACHE_S3_ACCESS_KEY and BINCACHE_S3_SECRET_KEY" unless ENV['BINCACHE_S3_ACCESS_KEY'] && ENV['BINCACHE_S3_SECRET_KEY']
+    @right_S3 = RightAws::BINCACHE_S3.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
+    @right_S3_bucket = @right_BINCACHE_S3.bucket(@bucket)
+    @right_S3_interface = RightAws::BINCACHE_S3Interface.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
   end
 
   def run_series(directory, scripts)
