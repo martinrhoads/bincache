@@ -1,16 +1,77 @@
 = bincache
 
-Description goes here.
+BinCache is a system designed to chache compiled binaries. It has resources for bash, ruby and chef. 
 
-== Note on Patches/Pull Requests
+== Bash example
+
+## create a some sample scripts
+cat <<EOF > script1
+  echo "I am in script one" > one
+EOF
  
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+cat <<EOF > script2
+  echo "I am in script two" > two
+EOF
+
+
+## install bincache 
+gem install bincache
+
+## set the directory to cache
+dir=/tmp/bincache
+
+## run bincache 
+bincache $dir $script1 $script2
+
+
+== Ruby example
+
+## make sure bincache is loaded
+require 'bincache' 
+
+## create two sample scripts
+script1 = <<EOS
+  echo "I am in script one" > one
+EOS
+
+script2 = <<EOS
+  echo "I am in script two" > two 
+EOS
+
+## create an empty list of scripts and add the sample script to it
+scripts = []
+scripts << script1
+scripts << script2
+
+
+## set the directory to cache
+dir = "/tmp/bincache"
+
+## run bincache
+bincache = BinCache.new
+bincache.run_sequence(dir,scripts)
+
+== Chef example 
+
+require 'bincache'
+ 
+bincache "script1" do
+  action :run
+  directory "/tmp/bincache"
+  script <<-EOS
+    echo "I am in script one" > one
+EOS
+end
+
+bincache "script2" do
+  action :run
+  directory "/tmp/bincache"
+  script <<-EOS
+    echo "I am in script two" > two
+EOS
+end
+
+ 
 
 == Copyright
 
