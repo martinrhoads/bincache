@@ -32,7 +32,7 @@ Make sure you set the environment variables with something like:
 == Bash example
 
   ## you may have to put rubygems in your path by doing something like..
-  # export PATH=$HOME/.gem/ruby/1.8/bin:$PATH
+  export PATH=$HOME/.gem/ruby/1.8/bin:$PATH
 
 
   ## set the directory to cache
