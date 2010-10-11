@@ -5,8 +5,11 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "bincache"
-    gem.summary = %Q{bines scripts}
-    gem.description = %Q{longer description of your gem}
+    gem.summary = %Q{bincache caches binaries}
+    gem.description = %Q{
+      BinCache is a system designed to cache compiled binaries. It has support for bash, ruby , and chef. 
+      Please visit http://github.com/ermal14/bincache for more info
+    }
     gem.email = "martinrhoads@gmail.com"
     gem.homepage = "http://github.com/ermal14/bincache"
     gem.authors = ["Martin Rhoads"]
