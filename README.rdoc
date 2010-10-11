@@ -2,6 +2,8 @@
 
 BinCache is a system designed to chache compiled binaries on S3. It has resources for bash, ruby and chef. 
 
+BinCache tracks a single directory and a series of scripts. After each script is run, the contents of the directory is cached on s3. On sequential runs, the scripts are not re-executed, but instead the cache from S3 is downloaded and placed in the directory. If a script is changed, itself and all following scripts will be re-executed. BinCache does this by hashing the current script together with all previous scripts ran and storing the resulting cache in S3 with that hash as it's name. By ensuring that scripts contain markers to introduce uniquness on different systems, you can make sure that you never have to wait twice for something to compile!
+
 == Install 
  
   ## add rubygems.org to your gem sources list if it is not already there
@@ -31,7 +33,7 @@ Make sure you set the environment variables with something like:
 
 == Bash example
 
-  ## you may have to put rubygems in your path by doing something like..
+  ## you may have to put rubygem bins in your path by doing something like..
   export PATH=$HOME/.gem/ruby/1.8/bin:$PATH
 
 
@@ -103,7 +105,16 @@ Make sure you set the environment variables with something like:
     EOS
   end
 
- 
+
+== uniquness example
+
+To tag a script with something unique to ensure that it is distingushible on multiple systems, you need to insert something unique into the comments. For example, you could do:
+
+  echo "I am showing you how to uniqueify your script" > example
+  ## #{`uname -m`}
+  ## #{`lsb_release -ds`
+
+When this script is hashed, it will produce different values on different systems. With this technique, you can cache different binaries from different systems with the same code base!
 
 == Copyright
 
