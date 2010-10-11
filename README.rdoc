@@ -4,21 +4,23 @@ BinCache is a system designed to chache compiled binaries. It has resources for 
 
 == Bash example
 
-  ## create a some sample scripts
-    cat <<EOF > script1
-    echo "I am in script one" > one
-  EOF
- 
-  cat <<EOF > script2
-    echo "I am in script two" > two
-  EOF
-
-
   ## install bincache 
   gem install bincache
 
+
   ## set the directory to cache
   dir=/tmp/bincache
+
+
+  ## create a some sample scripts
+  cat <<-EOF > script1
+    echo "I am in script one" > one
+  EOF
+ 
+  cat <<-EOF > script2
+    echo "I am in script two" > two
+  EOF
+
 
   ## run bincache 
   bincache $dir $script1 $script2
@@ -29,6 +31,11 @@ BinCache is a system designed to chache compiled binaries. It has resources for 
   ## make sure bincache is loaded
   require 'bincache' 
 
+
+  ## set the directory to cache
+  dir = "/tmp/bincache"
+
+
   ## create two sample scripts
   script1 = <<EOS
     echo "I am in script one" > one
@@ -38,14 +45,12 @@ BinCache is a system designed to chache compiled binaries. It has resources for 
     echo "I am in script two" > two 
   EOS
 
+
   ## create an empty list of scripts and add the sample script to it
   scripts = []
   scripts << script1
   scripts << script2
 
-
-  ## set the directory to cache
-  dir = "/tmp/bincache"
 
   ## run bincache
   bincache = BinCache.new
@@ -60,7 +65,7 @@ BinCache is a system designed to chache compiled binaries. It has resources for 
     directory "/tmp/bincache"
     script <<-EOS
       echo "I am in script one" > one
-  EOS
+    EOS
   end
 
   bincache "script2" do
@@ -68,7 +73,7 @@ BinCache is a system designed to chache compiled binaries. It has resources for 
     directory "/tmp/bincache"
     script <<-EOS
       echo "I am in script two" > two
-  EOS
+    EOS
   end
 
  
