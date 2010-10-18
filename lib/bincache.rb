@@ -24,20 +24,25 @@ class BinCache
 
 
     print_and_exit "S3 keys not set. Please set BINCACHE_S3_ACCESS_KEY and BINCACHE_S3_SECRET_KEY" unless ENV['BINCACHE_S3_ACCESS_KEY'] && ENV['BINCACHE_S3_SECRET_KEY']
-    @right_S3 = RightAws::BINCACHE_S3.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
-    @right_S3_bucket = @right_BINCACHE_S3.bucket(@bucket)
-    @right_S3_interface = RightAws::BINCACHE_S3Interface.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
+    @right_s3 = RightAws::S3.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
+    @right_s3_bucket = @right_s3.bucket(@bucket)
+    @right_s3_interface = RightAws::S3Interface.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
   end
 
-  def run_series(directory, scripts)
+  def run_series(directory, scripts, cwd=nil, script_hash=nil)
     ## exit if given bogus input
     print_and_exit "bogus input in run_series" if directory.nil? || scripts.nil? 
 
     ## clear out directory if we are starting a new sequence
     `rm -rf #{directory} && mkdir -p #{directory}` && return if scripts.empty?
 
-    ## hash the scripts
-    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
+    ## hash the scripts together with the output of the script_hash
+    script_hash_output = ""
+    script_hash_output = `#{script_hash}` unless script_hash == nil
+
+STDERR.puts "script_hash_output = #{script_hash_output}"
+
+    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}#{script_hash_output}")
        
     ## pop the last script   
     pop = scripts.pop
@@ -46,7 +51,7 @@ class BinCache
     eval("#{__method__}(directory,scripts)")  unless check_for_hash?(hash)
 
     ## step this script
-    step(pop,directory,hash)
+    step(pop,directory,hash,cwd)
   end
 
   def check_for_hash?(hash)
@@ -57,13 +62,14 @@ class BinCache
     key.exists?
   end
 
-  def step(script,directory,hash)
+  def step(script,directory,hash,cwd=nil)
     if download_hash? hash
       `rm -rf #{directory}`
       `cd #{File.dirname directory} && tar -xzvf #{File.join(@cache_dir,hash)} `
     else
       `mkdir -p #{directory} #{@cache_dir}`
-      Dir.chdir directory
+      Dir.chdir cwd unless cwd == nil
+      puts "pwd = #{`pwd`}"
       res = `#{script}`
       `cd #{File.dirname directory} && tar -czvf #{@cache_dir}/#{hash} #{File.basename directory} `
       upload_file("#{@cache_dir}/#{hash}")

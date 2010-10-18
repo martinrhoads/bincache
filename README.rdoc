@@ -83,7 +83,7 @@ Make sure you set the environment variables with something like:
 
   ## run bincache
   bincache = BinCache.new
-  bincache.run_sequence(dir,scripts)
+  bincache.run_series(dir,scripts)
 
 == Chef example 
 
