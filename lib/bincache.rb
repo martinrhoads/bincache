@@ -65,13 +65,13 @@ STDERR.puts "script_hash_output = #{script_hash_output}"
   def step(script,directory,hash,cwd=nil)
     if download_hash? hash
       `rm -rf #{directory}`
-      `cd #{File.dirname directory} && tar -xzvf #{File.join(@cache_dir,hash)} `
+      `cd #{File.dirname directory} && tar -xzf #{File.join(@cache_dir,hash)} `
     else
       `mkdir -p #{directory} #{@cache_dir}`
       Dir.chdir cwd unless cwd == nil
       puts "pwd = #{`pwd`}"
       res = `#{script}`
-      `cd #{File.dirname directory} && tar -czvf #{@cache_dir}/#{hash} #{File.basename directory} `
+      `cd #{File.dirname directory} && tar -czf #{@cache_dir}/#{hash} #{File.basename directory} `
       upload_file("#{@cache_dir}/#{hash}")
     end
   end
