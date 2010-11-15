@@ -29,20 +29,19 @@ class BinCache
     @right_s3_interface = RightAws::S3Interface.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
   end
 
-  def run_series(directory, scripts, cwd=nil, script_hash=nil)
+  def run_series_once(directory=nil, scripts=nil, cwd=nil)
+    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
+    run_series(directory,scripts,cwd,) unless File.exist?(File.join(directory,".#{hash}"))
+  end
+
+  def run_series(directory, scripts, cwd=nil)
     ## exit if given bogus input
     print_and_exit "bogus input in run_series" if directory.nil? || scripts.nil? 
 
     ## clear out directory if we are starting a new sequence
     `rm -rf #{directory} && mkdir -p #{directory}` && return if scripts.empty?
 
-    ## hash the scripts together with the output of the script_hash
-    script_hash_output = ""
-    script_hash_output = `#{script_hash}` unless script_hash == nil
-
-STDERR.puts "script_hash_output = #{script_hash_output}"
-
-    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}#{script_hash_output}")
+    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
        
     ## pop the last script   
     pop = scripts.pop
@@ -71,6 +70,7 @@ STDERR.puts "script_hash_output = #{script_hash_output}"
       Dir.chdir cwd unless cwd == nil
       puts "pwd = #{`pwd`}"
       res = `#{script}`
+      `touch #{File.join directory, ".#{hash}"}`
       `cd #{File.dirname directory} && tar -czf #{@cache_dir}/#{hash} #{File.basename directory} `
       upload_file("#{@cache_dir}/#{hash}")
     end
