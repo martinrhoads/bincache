@@ -29,19 +29,19 @@ class BinCache
     @right_s3_interface = RightAws::S3Interface.new(ENV['BINCACHE_S3_ACCESS_KEY'],ENV['BINCACHE_S3_SECRET_KEY'])
   end
 
-  def run_series_once(directory=nil, scripts=nil, cwd=nil)
-    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
-    run_series(directory,scripts,cwd,) unless File.exist?(File.join(directory,".#{hash}"))
+  def run_series_once(directory=nil, scripts=nil, cwd=nil, hash=nil)
+    hash ||= Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
+    run_series(directory,scripts,cwd) unless File.exist?(File.join(directory,".#{hash}"))
   end
 
-  def run_series(directory, scripts, cwd=nil)
+  def run_series(directory, scripts, cwd=nil, hash=nil)
     ## exit if given bogus input
     print_and_exit "bogus input in run_series" if directory.nil? || scripts.nil? 
 
     ## clear out directory if we are starting a new sequence
     `rm -rf #{directory} && mkdir -p #{directory}` && return if scripts.empty?
 
-    hash = Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
+    hash ||= Digest::MD5.hexdigest("#{directory.inspect}#{scripts.inspect}")
        
     ## pop the last script   
     pop = scripts.pop

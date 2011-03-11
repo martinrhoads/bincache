@@ -23,7 +23,7 @@ class Chef
         ## run bincache
         require 'bincache'
         bincache = BinCache.new
-        bincache.run_series(@new_resource.directory,scripts,@new_resource.cwd,@new_resource.script_hash)
+        bincache.run_series_once(@new_resource.directory,scripts,@new_resource.cwd,@new_resource.script_hash)
       end
 
 
