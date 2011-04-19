@@ -66,12 +66,12 @@ class BinCache
       `rm -rf #{directory}`
       `cd #{File.dirname directory} && tar -xzf #{File.join(@cache_dir,hash)} `
     else
-      `mkdir -p #{directory} #{@cache_dir}`
+      run_or_exit "mkdir -p #{directory} #{@cache_dir}"
       Dir.chdir cwd unless cwd == nil
       puts "pwd = #{`pwd`}"
-      res = `#{script}`
-      `touch #{File.join directory, ".#{hash}"}`
-      `cd #{File.dirname directory} && tar -czf #{@cache_dir}/#{hash} #{File.basename directory} `
+      run_or_exit(script, cwd)
+      run_or_exit "touch #{File.join directory, '.' + hash }"
+      run_or_exit "cd #{File.dirname directory} && tar -czf #{@cache_dir}/#{hash} #{File.basename directory} "
       upload_file("#{@cache_dir}/#{hash}")
     end
   end
@@ -121,6 +121,24 @@ class BinCache
     return Digest::MD5.hexdigest( node + children_hash ) 
 
   end
+
+
+  def run_or_exit(command,dir=nil)
+    Dir.chdir dir unless dir == nil
+    script_path = '/tmp/bincache_script'
+    File.open(script_path, 'w+') {|f| f.write(command) }
+    File.chmod(0544,script_path)
+    STDERR.puts "about to execute "
+    STDERR.puts "#{command}"
+    output = `bash #{script_path}`
+    STDERR.puts "output is '#{output}'"
+    unless $?.success?
+      STDERR.puts "command did not return success '#{command}'"
+      STDERR.puts "exiting..."
+      Kernel.exit 1
+    end
+  end
+
 
   def print_and_exit(message)
     STDERR.puts "caught an error in bincache" 
