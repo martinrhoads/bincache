@@ -129,7 +129,7 @@ class BinCache
     Dir.chdir dir unless dir == nil
     script_path = '/tmp/bincache_script'
     File.open(script_path, 'w+') {|f| f.write(command) }
-    File.chmod(0544,script_path)
+    File.chmod(0744,script_path)
     STDERR.puts "about to execute "
     STDERR.puts "#{command}"
     output = `bash #{script_path}`
