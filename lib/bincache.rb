@@ -92,7 +92,9 @@ class BinCache
 
     ## attempt to download the hash from s3
     begin
-      File.open(File.join(@cache_dir,hash) , 'w') {|f| f.write( @right_s3_interface.get_object(@bucket, "#{@prefix}#{hash}") ) }
+      object = @right_s3_interface.get_object(@bucket, "#{@prefix}#{hash}")
+      return false if object.nil?
+      File.open(File.join(@cache_dir,hash) , 'w') {|f| f.write( object ) }
     rescue 
       return false
     end
